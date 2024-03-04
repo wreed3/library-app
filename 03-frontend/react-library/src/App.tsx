@@ -1,11 +1,11 @@
 import React from 'react';
 
 function App() {
-  return (
-    <div>
-
-    </div>
-  );
+	return (
+		<div>
+			<h1>Welcome to the full stack course</h1>
+		</div>
+	);
 }
 
 export default App;
