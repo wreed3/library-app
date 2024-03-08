@@ -72,6 +72,7 @@ export const SearchBooksPage = () => {
 	}, [booksPerPage, currentPage, searchURL]);
 
 	const searchHandler = () => {
+		setCurrentPage(1);
 		if (searchInput === '') {
 			setSearchURL('');
 		} else {
