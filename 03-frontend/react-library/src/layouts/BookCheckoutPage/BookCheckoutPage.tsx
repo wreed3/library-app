@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react';
 import { BookModel } from '../../models/BookModel';
 import { SpinnerLoading } from '../../Utils/SpinnerLoading';
+import { useParams } from 'react-router-dom';
 
 export const BookCheckoutPage = () => {
 	const [book, setBook] = useState<BookModel>();
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [httpError, setHttpError] = useState<string | null>(null);
 
-	const bookId = window.location.pathname.split('/')[2];
+	//grab id params off url
+	// const bookId = window.location.pathname.split('/')[2];
+
+	let { bookId } = useParams();
 
 	useEffect(() => {
 		const fetchBook = async () => {
@@ -38,7 +42,7 @@ export const BookCheckoutPage = () => {
 			setIsLoading(false);
 			setHttpError(error.message);
 		});
-	}, []);
+	}, [bookId]);
 
 	if (isLoading) {
 		return <SpinnerLoading />;

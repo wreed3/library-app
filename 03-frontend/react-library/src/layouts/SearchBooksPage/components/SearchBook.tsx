@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { BookModel } from '../../../models/BookModel';
 
 interface SearchBookProps {
@@ -42,9 +43,12 @@ export const SearchBook = ({ book }: SearchBookProps) => {
 					</div>
 				</div>
 				<div className="col-md-4 d-flex justify-content-center align-items-center">
-					<a className="btn btn-secondary main-color text-white" href="#void">
+					<Link
+						className="btn btn-secondary main-color text-white"
+						to={`/checkout/${book.id}`}
+					>
 						View Details
-					</a>
+					</Link>
 				</div>
 			</div>
 		</div>

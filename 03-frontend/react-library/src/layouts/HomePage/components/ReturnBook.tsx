@@ -21,7 +21,7 @@ export const ReturnBook = ({ book }: ReturnBookProps) => {
 				)}
 				<h6 className="mt-2">{book.title}</h6>
 				<p>{book.author}</p>
-				<a className="btn main-color text-white" href="#void">
+				<a className="btn main-color btn-secondary text-white" href="#void">
 					Reserve
 				</a>
 			</div>
