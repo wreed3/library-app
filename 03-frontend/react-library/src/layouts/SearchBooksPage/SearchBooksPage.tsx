@@ -14,6 +14,8 @@ export const SearchBooksPage = () => {
 	const [totalPages, setTotalPages] = useState<number>(0);
 	const [searchInput, setSearchInput] = useState<string>('');
 	const [searchURL, setSearchURL] = useState<string>('');
+	const [categorySelection, setCategorySelection] =
+		useState<string>('Book Category');
 
 	useEffect(() => {
 		const fetchBooks = async () => {
@@ -82,6 +84,23 @@ export const SearchBooksPage = () => {
 		}
 	};
 
+	const categoryDropDownHandler = (value: string) => {
+		setCurrentPage(1);
+		if (
+			value.toLowerCase() === 'fe' ||
+			value.toLowerCase() === 'be' ||
+			value.toLowerCase() === 'data' ||
+			value.toLowerCase() === 'devops'
+		) {
+			setCategorySelection(value);
+			const searchByCategory: string = `/search/findByCategory?category=${value}`;
+			setSearchURL(searchByCategory);
+		} else {
+			setCategorySelection('All');
+			setSearchURL('');
+		}
+	};
+
 	if (isLoading) {
 		return <SpinnerLoading />;
 	}
@@ -141,33 +160,33 @@ export const SearchBooksPage = () => {
 									data-bs-toggle="dropdown"
 									aria-expanded="false"
 								>
-									Category
+									{categorySelection}
 								</button>
 								<ul
 									className="dropdown-menu"
 									aria-labelledby="dropdownMenuButton1"
 								>
-									<li>
+									<li onClick={() => categoryDropDownHandler('All')}>
 										<a className="dropdown-item" href="#void">
 											All
 										</a>
 									</li>
-									<li>
+									<li onClick={() => categoryDropDownHandler('FE')}>
 										<a className="dropdown-item" href="#void">
 											Front End
 										</a>
 									</li>
-									<li>
+									<li onClick={() => categoryDropDownHandler('BE')}>
 										<a className="dropdown-item" href="#void">
 											Back End
 										</a>
 									</li>
-									<li>
+									<li onClick={() => categoryDropDownHandler('Data')}>
 										<a className="dropdown-item" href="#void">
 											Data
 										</a>
 									</li>
-									<li>
+									<li onClick={() => categoryDropDownHandler('DevOps')}>
 										<a className="dropdown-item" href="#void">
 											DevOps
 										</a>
