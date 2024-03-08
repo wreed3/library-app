@@ -72,9 +72,13 @@ export const SearchBooksPage = () => {
 	}, [booksPerPage, currentPage, searchURL]);
 
 	const searchHandler = () => {
-		const trimmedSearchInput = searchInput.trim();
-		const searchByTitle: string = `/search/findByTitleContaining?title=${trimmedSearchInput}`;
-		setSearchURL(searchByTitle);
+		if (searchInput === '') {
+			setSearchURL('');
+		} else {
+			const trimmedSearchInput = searchInput.trim();
+			const searchByTitle: string = `/search/findByTitleContaining?title=${trimmedSearchInput}`;
+			setSearchURL(searchByTitle);
+		}
 	};
 
 	if (isLoading) {
@@ -171,16 +175,31 @@ export const SearchBooksPage = () => {
 							</div>
 						</div>
 					</div>
-					<div className="mt-3">
-						<h5>Number of results: ({totalAmountOfBooks})</h5>
-					</div>
-					<p>
-						{books.length === 0 ? indexOfFirstBook : indexOfFirstBook + 1} to{' '}
-						{lastItem} of {totalAmountOfBooks} items:
-					</p>
-					{books.map((book) => (
-						<SearchBook book={book} key={book.id} />
-					))}
+					{totalAmountOfBooks > 0 ? (
+						<>
+							<div className="mt-3">
+								<h5>Number of results: ({totalAmountOfBooks})</h5>
+							</div>
+							<p>
+								{indexOfFirstBook + 1} to {lastItem} of {totalAmountOfBooks}{' '}
+								items:
+							</p>
+							{books.map((book) => (
+								<SearchBook book={book} key={book.id} />
+							))}
+						</>
+					) : (
+						<div className="m-5">
+							<h3>Can't find what your looking for?</h3>
+							<a
+								type="button"
+								href="#void"
+								className="btn main-color btn-secondary px-4 me-md-2 fw-bold text-white"
+							>
+								Library Services
+							</a>
+						</div>
+					)}
 					{totalPages > 1 && (
 						<Pagination
 							currentPage={currentPage}
