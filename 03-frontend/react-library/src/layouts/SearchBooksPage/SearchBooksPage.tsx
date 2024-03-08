@@ -97,7 +97,7 @@ export const SearchBooksPage = () => {
 			setSearchURL(searchByCategory);
 		} else {
 			setCategorySelection('All');
-			setSearchURL('');
+			setSearchURL(`?page=${currentPage - 1}&size=${booksPerPage}`);
 		}
 	};
 
