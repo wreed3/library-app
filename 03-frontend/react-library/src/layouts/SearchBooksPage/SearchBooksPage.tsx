@@ -12,15 +12,22 @@ export const SearchBooksPage = () => {
 	const [booksPerPage] = useState<number>(5);
 	const [totalAmountOfBooks, setTotalAmountOfBooks] = useState<number>(0);
 	const [totalPages, setTotalPages] = useState<number>(0);
+	const [searchInput, setSearchInput] = useState<string>('');
+	const [searchURL, setSearchURL] = useState<string>('');
 
 	useEffect(() => {
 		const fetchBooks = async () => {
 			const baseURL: string = 'http://localhost:8080/api/books';
 
-			const pagination: string = `?page=${
-				currentPage - 1
-			}&size=${booksPerPage}`;
-			const url: string = `${baseURL}${pagination}`;
+			const pagination: string = `page=${currentPage - 1}&size=${booksPerPage}`;
+
+			let url: string = '';
+
+			if (searchURL === '') {
+				url = `${baseURL}?${pagination}`;
+			} else {
+				url = `${baseURL}${searchURL}&${pagination}`;
+			}
 
 			const response = await fetch(url);
 
@@ -29,7 +36,6 @@ export const SearchBooksPage = () => {
 			}
 
 			const responseJson = await response.json();
-			console.log('responseJson', responseJson);
 
 			const responseData = responseJson._embedded.books;
 
@@ -37,27 +43,25 @@ export const SearchBooksPage = () => {
 			setTotalPages(responseJson.page.totalPages);
 
 			/*
-		
 				To make sure that we follow the Book schema:
+        */
 
-        const loadedBooks: BookModel[] = [];
-        
-        for (const key in responseData) {
-          	loadedBooks.push({
-            		id: responseData[key].id,
-            		title: responseData[key].title,
-            		author: responseData[key].author,
-            		description: responseData[key].description,
-            		copies: responseData[key].copies,
-            		copiesAvailable: responseData[key].copiesAvailable,
-            		category: responseData[key].category,
-            		img: responseData[key].img,
-            	});
-            }
-      
-          */
+			const loadedBooks: BookModel[] = [];
 
-			setBooks(responseData);
+			for (const key in responseData) {
+				loadedBooks.push({
+					id: responseData[key].id,
+					title: responseData[key].title,
+					author: responseData[key].author,
+					description: responseData[key].description,
+					copies: responseData[key].copies,
+					copiesAvailable: responseData[key].copiesAvailable,
+					category: responseData[key].category,
+					img: responseData[key].img,
+				});
+			}
+
+			setBooks(loadedBooks);
 			setIsLoading(false);
 		};
 		fetchBooks().catch((error: any) => {
@@ -65,7 +69,13 @@ export const SearchBooksPage = () => {
 			setHttpError(error.message);
 		});
 		window.scrollTo(0, 0);
-	}, [currentPage]);
+	}, [booksPerPage, currentPage, searchURL]);
+
+	const searchHandler = () => {
+		const trimmedSearchInput = searchInput.trim();
+		const searchByTitle: string = `/search/findByTitleContaining?title=${trimmedSearchInput}`;
+		setSearchURL(searchByTitle);
+	};
 
 	if (isLoading) {
 		return <SpinnerLoading />;
@@ -79,13 +89,19 @@ export const SearchBooksPage = () => {
 		);
 	}
 
-	// const indexOfLastBook: number = currentPage * booksPerPage;
-	// const indexOfFirstBook: number = indexOfLastBook - booksPerPage;
-	// let lastItem =
-	// 	booksPerPage * currentPage <= totalAmountOfBooks
-	// 		? booksPerPage * currentPage
-	// 		: totalAmountOfBooks;
+	const indexOfLastBook: number = currentPage * booksPerPage;
+	const indexOfFirstBook: number = indexOfLastBook - booksPerPage;
+	let lastItem =
+		booksPerPage * currentPage <= totalAmountOfBooks
+			? booksPerPage * currentPage
+			: totalAmountOfBooks;
 	const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+	const enterPressed = (event: any) => {
+		if (event.key === 'Enter') {
+			searchHandler();
+		}
+	};
 
 	return (
 		<div>
@@ -99,8 +115,16 @@ export const SearchBooksPage = () => {
 									className="form-control me-2"
 									placeholder="Search"
 									aria-labelledby="Search"
+									value={searchInput}
+									onChange={(e) => setSearchInput(e.target.value)}
+									onKeyDown={(e) => enterPressed(e)}
 								/>
-								<button className="btn btn-outline-success">Search</button>
+								<button
+									onClick={searchHandler}
+									className="btn btn-outline-success"
+								>
+									Search
+								</button>
 							</div>
 						</div>
 						<div className="col-4">
@@ -151,7 +175,8 @@ export const SearchBooksPage = () => {
 						<h5>Number of results: ({totalAmountOfBooks})</h5>
 					</div>
 					<p>
-						{currentPage} to {booksPerPage} of {totalAmountOfBooks} items:
+						{books.length === 0 ? indexOfFirstBook : indexOfFirstBook + 1} to{' '}
+						{lastItem} of {totalAmountOfBooks} items:
 					</p>
 					{books.map((book) => (
 						<SearchBook book={book} key={book.id} />
