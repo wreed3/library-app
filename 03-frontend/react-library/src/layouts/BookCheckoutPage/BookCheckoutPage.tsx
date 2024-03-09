@@ -3,6 +3,7 @@ import { BookModel } from '../../models/BookModel';
 import { SpinnerLoading } from '../../Utils/SpinnerLoading';
 import { useParams } from 'react-router-dom';
 import { StarsReview } from '../../Utils/StarsReview';
+import { CheckoutAndReviewBox } from './CheckoutAndReviewBox';
 
 export const BookCheckoutPage = () => {
 	const [book, setBook] = useState<BookModel>();
@@ -81,6 +82,7 @@ export const BookCheckoutPage = () => {
 							<StarsReview rating={4.5} size={32} />
 						</div>
 					</div>
+					<CheckoutAndReviewBox book={book} mobile={false} />
 				</div>
 				<hr />
 			</div>
@@ -105,6 +107,7 @@ export const BookCheckoutPage = () => {
 						<StarsReview rating={4.5} size={32} />
 					</div>
 				</div>
+				<CheckoutAndReviewBox book={book} mobile={true} />
 				<hr />
 			</div>
 		</div>
