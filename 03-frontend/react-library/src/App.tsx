@@ -21,7 +21,9 @@ export const App = () => {
 	const history = useHistory();
 
 	const restoreOriginalUri = async (_oktaAuth: any, originalUri: any) => {
-		history.replace(toRelativeUrl(originalUri || '/', window.location.origin));
+		history.replace(
+			toRelativeUrl(originalUri || '/home', window.location.origin)
+		);
 	};
 
 	return (
