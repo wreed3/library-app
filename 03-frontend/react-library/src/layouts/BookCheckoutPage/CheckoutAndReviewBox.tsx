@@ -4,12 +4,45 @@ import { BookModel } from '../../models/BookModel';
 interface CheckoutAndReviewBoxProps {
 	book: BookModel | undefined;
 	mobile: boolean;
+	currentLoansCount: number;
+	isCheckedOut: boolean;
+	isAuthenticated: any;
+	checkoutBook: any;
 }
 
 export const CheckoutAndReviewBox = ({
 	book,
 	mobile,
+	currentLoansCount,
+	isCheckedOut,
+	isAuthenticated,
+	checkoutBook,
 }: CheckoutAndReviewBoxProps) => {
+	function buttonRender() {
+		if (isAuthenticated) {
+			if (!isCheckedOut && currentLoansCount < 5) {
+				return (
+					<button onClick={checkoutBook} className="btn btn-success btn-lg">
+						Checkout
+					</button>
+				);
+			} else if (isCheckedOut) {
+				return (
+					<p>
+						<b>Book checked out. Enjoy!</b>
+					</p>
+				);
+			} else if (!isCheckedOut) {
+				return <p className="text-danger">Too many books checked out.</p>;
+			}
+		}
+		return (
+			<Link to="/login" className="btn btn-success btn-lg">
+				Sign In
+			</Link>
+		);
+	}
+
 	return (
 		<div
 			className={
@@ -19,7 +52,7 @@ export const CheckoutAndReviewBox = ({
 			<div className="card-body container">
 				<div className="mt-3">
 					<p>
-						<b> 0/5 </b>
+						<b> {currentLoansCount}/5 </b>
 						books checked out
 					</p>
 
@@ -40,9 +73,7 @@ export const CheckoutAndReviewBox = ({
 						</p>
 					</div>
 				</div>
-				<Link to="#void" className="btn btn-success btn-lg">
-					Sign In
-				</Link>
+				{buttonRender()}
 				<hr />
 				<p className="mt-3">
 					This number can change until placing order has been complete
