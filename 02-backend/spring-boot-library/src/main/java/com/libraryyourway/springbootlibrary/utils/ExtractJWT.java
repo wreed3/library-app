@@ -27,14 +27,9 @@ public class ExtractJWT {
                     remove = 2;
                 }
                 keyValue[1] = keyValue[1].substring(0, keyValue[1].length() - remove);
-                System.out.println("value1 " + keyValue[1]);
                 keyValue[1] = keyValue[1].substring(1);
-                System.out.println("value2 " + keyValue[1]);
-
 
                 map.put(keyValue[0], keyValue[1]);
-
-
             }
         }
         if(map.containsKey(extraction)){
