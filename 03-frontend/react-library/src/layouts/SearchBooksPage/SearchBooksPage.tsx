@@ -5,13 +5,18 @@ import { SearchBook } from './components/SearchBook';
 import { Pagination } from '../../Utils/Pagination';
 
 export const SearchBooksPage = () => {
+	//Books State
 	const [books, setBooks] = useState<BookModel[]>([]);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [httpError, setHttpError] = useState<string | null>(null);
+
+	//Pagination
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [booksPerPage] = useState<number>(5);
 	const [totalAmountOfBooks, setTotalAmountOfBooks] = useState<number>(0);
 	const [totalPages, setTotalPages] = useState<number>(0);
+
+	//Search State
 	const [searchInput, setSearchInput] = useState<string>('');
 	const [searchURL, setSearchURL] = useState<string>('');
 	const [categorySelection, setCategorySelection] =

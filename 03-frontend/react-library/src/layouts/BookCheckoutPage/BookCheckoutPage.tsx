@@ -11,6 +11,7 @@ import { ReviewRequestModel } from '../../models/ReviewRequestModel';
 export const BookCheckoutPage = () => {
 	const { authState } = useOktaAuth();
 
+	//Book State
 	const [book, setBook] = useState<BookModel>();
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [httpError, setHttpError] = useState<string | null>(null);

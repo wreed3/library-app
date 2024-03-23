@@ -28,7 +28,7 @@ export const LatestReviews = ({
 							<Link
 								type="button"
 								className="btn main-color btn-secondary btn-md text-white"
-								to="#void"
+								to={`/reviewlist/${bookId}`}
 							>
 								Reach all reviews.
 							</Link>
