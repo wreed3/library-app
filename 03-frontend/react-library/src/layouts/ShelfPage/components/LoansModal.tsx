@@ -3,9 +3,14 @@ import { ShelfCurrentLoans } from '../../../models/ShelfCurrentLoans';
 interface LoansModalProps {
 	shelfCurrentLoan: ShelfCurrentLoans;
 	mobile: boolean;
+	returnBook: any;
 }
 
-export const LoansModal = ({ shelfCurrentLoan, mobile }: LoansModalProps) => {
+export const LoansModal = ({
+	shelfCurrentLoan,
+	mobile,
+	returnBook,
+}: LoansModalProps) => {
 	return (
 		<div
 			className="modal fade"
@@ -75,6 +80,7 @@ export const LoansModal = ({ shelfCurrentLoan, mobile }: LoansModalProps) => {
 								)}
 								<div className="list-group mt-3">
 									<button
+										onClick={() => returnBook(shelfCurrentLoan.book.id)}
 										data-bs-dismiss="modal"
 										className="list-group-item list-group-item-action"
 										aria-current="true"

@@ -13,6 +13,7 @@ export const Loans = () => {
 		ShelfCurrentLoans[]
 	>([]);
 	const [isLoadingUserLoans, setIsLoadingUserLoans] = useState<boolean>(true);
+	const [checkedOut, setCheckedOut] = useState<boolean>(false);
 
 	useEffect(() => {
 		const fetchUserCurrentLoansCount = async () => {
@@ -42,7 +43,7 @@ export const Loans = () => {
 			setHttpError(error.message);
 		});
 		window.scrollTo(0, 0);
-	}, [authState]);
+	}, [authState, checkedOut]);
 
 	if (isLoadingUserLoans) {
 		return <SpinnerLoading />;
@@ -55,6 +56,25 @@ export const Loans = () => {
 			</div>
 		);
 	}
+
+	const returnBook = async (bookId: number) => {
+		const URL = `http://localhost:8080/api/books/secure/return/?bookId=${bookId}`;
+
+		const requestOptions = {
+			method: 'PUT',
+			headers: {
+				Authorization: `Bearer ${authState?.accessToken?.accessToken}`,
+				'Content-Type': 'application/json',
+			},
+		};
+
+		const returnBookResponse = await fetch(URL, requestOptions);
+
+		if (!returnBookResponse.ok) {
+			throw new Error('Something went wrong!');
+		}
+		setCheckedOut(!checkedOut);
+	};
 
 	return (
 		<div>
@@ -134,6 +154,7 @@ export const Loans = () => {
 								<LoansModal
 									shelfCurrentLoan={shelfCurrentLoan}
 									mobile={false}
+									returnBook={returnBook}
 								/>
 							</div>
 						))}
@@ -218,7 +239,11 @@ export const Loans = () => {
 									</div>
 								</div>
 								<hr />
-								<LoansModal shelfCurrentLoan={shelfCurrentLoan} mobile={true} />
+								<LoansModal
+									shelfCurrentLoan={shelfCurrentLoan}
+									mobile={true}
+									returnBook={returnBook}
+								/>
 							</div>
 						))}
 					</>
