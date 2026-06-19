@@ -1,0 +1,168 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(LIBRARIAN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+}
+
+enum Role {
+  ADMIN
+  LIBRARIAN
+  MEMBER
+}
+
+model Member {
+  id            String        @id @default(cuid())
+  cardNumber    String        @unique
+  name          String
+  email         String        @unique
+  phone         String?
+  address       String?
+  status        MemberStatus  @default(ACTIVE)
+  joinDate      DateTime      @default(now())
+  expiryDate    DateTime
+  checkouts     Checkout[]
+  reservations  Reservation[]
+  fines         Fine[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([cardNumber])
+  @@index([email])
+  @@index([status])
+}
+
+enum MemberStatus {
+  ACTIVE
+  SUSPENDED
+  EXPIRED
+}
+
+model Book {
+  id            String        @id @default(cuid())
+  isbn          String        @unique
+  title         String
+  subtitle      String?
+  description   String?
+  publisher     String?
+  publishedDate DateTime?
+  pageCount     Int?
+  language      String        @default("en")
+  coverImage    String?
+  quantity      Int           @default(1)
+  available     Int           @default(1)
+  authors       Author[]
+  categories    Category[]
+  checkouts     Checkout[]
+  reservations  Reservation[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([isbn])
+  @@index([title])
+}
+
+model Author {
+  id        String   @id @default(cuid())
+  name      String
+  books     Book[]
+  createdAt DateTime @default(now())
+
+  @@index([name])
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  books     Book[]
+  createdAt DateTime @default(now())
+}
+
+model Checkout {
+  id           String         @id @default(cuid())
+  member       Member         @relation(fields: [memberId], references: [id])
+  memberId     String
+  book         Book           @relation(fields: [bookId], references: [id])
+  bookId       String
+  checkoutDate DateTime       @default(now())
+  dueDate      DateTime
+  returnDate   DateTime?
+  status       CheckoutStatus @default(ACTIVE)
+  fine         Fine?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([memberId])
+  @@index([bookId])
+  @@index([status])
+  @@index([dueDate])
+}
+
+enum CheckoutStatus {
+  ACTIVE
+  RETURNED
+  OVERDUE
+}
+
+model Reservation {
+  id            String            @id @default(cuid())
+  member        Member            @relation(fields: [memberId], references: [id])
+  memberId      String
+  book          Book              @relation(fields: [bookId], references: [id])
+  bookId        String
+  status        ReservationStatus @default(PENDING)
+  reservedDate  DateTime          @default(now())
+  notifiedDate  DateTime?
+  expiryDate    DateTime
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@index([memberId])
+  @@index([bookId])
+  @@index([status])
+}
+
+enum ReservationStatus {
+  PENDING
+  AVAILABLE
+  FULFILLED
+  EXPIRED
+  CANCELLED
+}
+
+model Fine {
+  id         String     @id @default(cuid())
+  member     Member     @relation(fields: [memberId], references: [id])
+  memberId   String
+  checkout   Checkout   @relation(fields: [checkoutId], references: [id])
+  checkoutId String     @unique
+  amount     Decimal    @db.Decimal(10, 2)
+  paidAmount Decimal    @default(0) @db.Decimal(10, 2)
+  status     FineStatus @default(UNPAID)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@index([memberId])
+  @@index([status])
+}
+
+enum FineStatus {
+  UNPAID
+  PARTIALLY_PAID
+  PAID
+  WAIVED
+}
